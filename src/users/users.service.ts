@@ -15,8 +15,18 @@ export class UsersService {
 
 	private toModel(userDoc: UserDocument): User {
 		return {
-			...userDoc,
 			_id: userDoc._id.toHexString(),
+			username: userDoc.username,
+			followersId: userDoc.followersId,
+			followingIds: userDoc.followingIds,
+			isVerified: userDoc.isVerified,
+			joinDate: userDoc.joinDate,
+			displayName: userDoc.displayName,
+			bio: userDoc.bio,
+			website: userDoc.website,
+			avatarUri: userDoc.avatarUri,
+			birth: userDoc.birth,
+			location: userDoc.location,
 		};
 	}
 
