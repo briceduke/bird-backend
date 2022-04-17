@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
+import { DatabaseModule } from './database/database.module';
+
 @Module({
 	imports: [
 		ConfigModule.forRoot({
@@ -13,6 +15,7 @@ import * as Joi from 'joi';
 				JWT_EXP: Joi.string().required(),
 			}),
 		}),
+		DatabaseModule,
 	],
 	providers: [],
 })
