@@ -57,11 +57,15 @@ export class UsersService {
 			data
 		);
 
+		if (!userDoc) throw new NotFoundException();
+
 		return this.toModel(userDoc);
 	}
 
 	async get(dto: GetUserDto): Promise<User> {
 		const userDoc = await this.usersRepo.findOne(dto);
+
+		if (!userDoc) throw new NotFoundException();
 
 		return this.toModel(userDoc);
 	}

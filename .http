@@ -1,0 +1,27 @@
+POST http://localhost:6969/users HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "brice",
+    "password": "sdfddfdfdfg",
+    "displayName": "Brice Duke"
+}
+
+###
+
+PUT http://localhost:6969/users HTTP/1.1
+Content-Type: application/json
+
+{
+    "_id": "625b87cfebe401781f3c463e",
+    "bio": "a guy"
+}
+
+###
+
+GET http://localhost:6969/users HTTP/1.1
+Content-Type: application/json
+
+{
+    "_id": "625b87cfebe401781f3c463e"
+}
