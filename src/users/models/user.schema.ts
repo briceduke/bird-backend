@@ -24,26 +24,26 @@ export class UserDocument extends AbstractDocument {
 	@Prop()
 	isMuted: boolean;
 
-	@Prop()
-	bio: string;
+	@Prop({ required: false })
+	bio?: string;
 
-	@Prop()
-	website: string;
+	@Prop({ required: false })
+	website?: string;
 
-	@Prop()
-	birth: Date;
+	@Prop({ required: false })
+	birth?: Date;
 
 	@Prop()
 	joinDate: Date;
 
-	@Prop()
-	location: string;
+	@Prop({ required: false })
+	location?: string;
 
-	@Prop()
-	displayName: string;
+	@Prop({ required: false })
+	displayName?: string;
 
-	@Prop()
-	avatarUri: string;
+	@Prop({ required: false })
+	avatarUri?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserDocument);

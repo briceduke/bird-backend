@@ -15,17 +15,17 @@ export class User extends AbstractModel {
 
 	readonly isMuted: boolean;
 
-	readonly bio: string;
+	readonly bio?: string;
 
-	readonly website: string;
+	readonly website?: string;
 
-	readonly birth: Date;
+	readonly birth?: Date;
 
 	readonly joinDate: Date;
 
-	readonly location: string;
+	readonly location?: string;
 
-	readonly displayName: string;
+	readonly displayName?: string;
 
-	readonly avatarUri: string;
+	readonly avatarUri?: string;
 }
