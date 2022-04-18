@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 
+import { GetUserByUsernameDto } from './dto/args/get-user-username.dto';
 import { GetUserDto } from './dto/args/get-user.dto';
 import { GetUsersDto } from './dto/args/get-users.dto';
 import { CreateUserInput } from './dto/input/create-user.input';
@@ -14,6 +15,13 @@ export class UsersController {
 	@Get()
 	async getUser(@Body() getUserDto: GetUserDto): Promise<User> {
 		return this.usersService.get(getUserDto);
+	}
+
+	@Get("username")
+	async getUserByUsername(
+		@Body() getUserByUsername: GetUserByUsernameDto
+	): Promise<User> {
+		return this.usersService.get(getUserByUsername);
 	}
 
 	@Get("many")

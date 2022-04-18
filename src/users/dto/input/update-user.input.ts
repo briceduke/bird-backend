@@ -1,4 +1,4 @@
-import { IsDate, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateUserInput {
 	@IsNotEmpty()
@@ -7,14 +7,14 @@ export class UpdateUserInput {
 
 	@IsOptional()
 	@IsString()
-	@MinLength(3)
-	@MaxLength(30)
+	@MinLength(4)
+	@MaxLength(50)
 	readonly displayName?: string;
 
 	@IsOptional()
 	@IsString()
 	@MinLength(3)
-	@MaxLength(30)
+	@MaxLength(160)
 	readonly bio?: string;
 
 	@IsOptional()
@@ -22,15 +22,16 @@ export class UpdateUserInput {
 	readonly website?: string;
 
 	@IsOptional()
-	@IsDate()
+	@IsDateString()
 	readonly birth?: Date;
 
 	@IsOptional()
 	@IsString()
 	@MinLength(3)
-	@MaxLength(10)
+	@MaxLength(30)
 	readonly location?: string;
 
 	@IsOptional()
+	@IsUrl()
 	readonly avatarUri?: string;
 }

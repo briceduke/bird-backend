@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
+import { GetUserByUsernameDto } from './dto/args/get-user-username.dto';
 import { GetUserDto } from './dto/args/get-user.dto';
 import { GetUsersDto } from './dto/args/get-users.dto';
 import { CreateUserInput } from './dto/input/create-user.input';
@@ -72,7 +73,7 @@ export class UsersService {
 		return this.toModel(userDoc);
 	}
 
-	async get(dto: GetUserDto): Promise<User> {
+	async get(dto: GetUserDto | GetUserByUsernameDto): Promise<User> {
 		const userDoc = await this.usersRepo.findOne(dto);
 
 		if (!userDoc) throw new NotFoundException();
