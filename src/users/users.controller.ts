@@ -22,6 +22,12 @@ export class UsersController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@Get("/me")
+	async getMe(@CurrentUser() user: User): Promise<User> {
+		return this.usersService.get({ _id: user._id });
+	}
+
+	@UseGuards(JwtAuthGuard)
 	@Get("username")
 	async getUserByUsername(
 		@Body() getUserByUsername: GetUserByUsernameDto
