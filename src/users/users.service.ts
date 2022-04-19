@@ -5,6 +5,7 @@ import { GetUserByUsernameDto } from './dto/args/get-user-username.dto';
 import { GetUserDto } from './dto/args/get-user.dto';
 import { GetUsersDto } from './dto/args/get-users.dto';
 import { CreateUserInput } from './dto/input/create-user.input';
+import { FollowUserInput } from './dto/input/follow-user.input';
 import { UpdateUserInput } from './dto/input/update-user.input';
 import { User } from './models/user.model';
 import { UserDocument } from './models/user.schema';
@@ -18,7 +19,9 @@ export class UsersService {
 		return {
 			_id: userDoc._id.toHexString(),
 			username: userDoc.username,
+			followersCount: userDoc.followersCount,
 			followersId: userDoc.followersId,
+			followingCount: userDoc.followingCount,
 			followingIds: userDoc.followingIds,
 			isVerified: userDoc.isVerified,
 			joinDate: userDoc.joinDate,
@@ -28,6 +31,7 @@ export class UsersService {
 			avatarUri: userDoc.avatarUri,
 			birth: userDoc.birth,
 			location: userDoc.location,
+			chirpsCount: userDoc.chirpsCount,
 		};
 	}
 
@@ -50,25 +54,88 @@ export class UsersService {
 
 		const userDoc = await this.usersRepo.create({
 			...data,
+			followersCount: 0,
 			followersId: [],
+			followingCount: 0,
 			followingIds: [],
 			isMuted: false,
 			isBanned: false,
 			isVerified: false,
 			joinDate: new Date(Date.now()),
 			password: await bcrypt.hash(data.password, 13),
+			chirpsCount: 0,
 		});
 
 		return this.toModel(userDoc);
 	}
 
-	async update(data: UpdateUserInput): Promise<User> {
+	async update(data: UpdateUserInput, userId: string): Promise<User> {
 		const userDoc = await this.usersRepo.findOneAndUpdate(
-			{ _id: data._id },
+			{ _id: userId },
 			data
 		);
 
 		if (!userDoc) throw new NotFoundException();
+
+		return this.toModel(userDoc);
+	}
+
+	async follow(data: FollowUserInput, userId: string): Promise<User> {
+		const targetDoc = await this.usersRepo.findOneAndUpdate(
+			{ _id: data._id },
+			{
+				$push: {
+					followersId: userId,
+				},
+				$inc: {
+					followersCount: 1,
+				},
+			}
+		);
+
+		if (!targetDoc) throw new NotFoundException();
+
+		const userDoc = await this.usersRepo.findOneAndUpdate(
+			{ _id: userId },
+			{
+				$push: {
+					followingIds: targetDoc._id,
+				},
+				$inc: {
+					followingCount: 1,
+				},
+			}
+		);
+
+		return this.toModel(userDoc);
+	}
+
+	async unfollow(data: FollowUserInput, userId: string): Promise<User> {
+		const targetDoc = await this.usersRepo.findOneAndUpdate(
+			{ _id: data._id },
+			{
+				$pull: {
+					followersId: userId,
+				},
+				$inc: {
+					followersCount: -1,
+				},
+			}
+		);
+
+		if (!targetDoc) throw new NotFoundException();
+
+		const userDoc = await this.usersRepo.findOneAndUpdate(
+			{ _id: userId },
+			{
+				$pull: {
+					followingIds: targetDoc._id,
+				},
+				$inc: {
+					followingCount: -1,
+				},
+			}
+		);
 
 		return this.toModel(userDoc);
 	}

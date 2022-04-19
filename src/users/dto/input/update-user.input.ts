@@ -1,10 +1,6 @@
-import { IsDateString, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsOptional, IsString, IsUrl, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateUserInput {
-	@IsNotEmpty()
-	@IsString()
-	readonly _id: string;
-
 	@IsOptional()
 	@IsString()
 	@MinLength(4)

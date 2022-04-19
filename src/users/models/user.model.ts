@@ -5,7 +5,11 @@ export class User extends AbstractModel {
 
 	readonly followersId: string[];
 
+	readonly followersCount: number;
+
 	readonly followingIds: string[];
+
+	readonly followingCount: number;
 
 	readonly isVerified: boolean;
 
@@ -22,4 +26,6 @@ export class User extends AbstractModel {
 	readonly displayName?: string;
 
 	readonly avatarUri?: string;
+
+	readonly chirpsCount: number;
 }

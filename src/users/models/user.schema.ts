@@ -13,7 +13,13 @@ export class UserDocument extends AbstractDocument {
 	followersId: string[];
 
 	@Prop()
+	followersCount: number;
+
+	@Prop()
 	followingIds: string[];
+
+	@Prop()
+	followingCount: number;
 
 	@Prop()
 	isVerified: boolean;
@@ -44,6 +50,9 @@ export class UserDocument extends AbstractDocument {
 
 	@Prop({ required: false })
 	avatarUri?: string;
+
+	@Prop()
+	chirpsCount: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserDocument);
