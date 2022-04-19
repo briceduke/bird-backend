@@ -1,7 +1,11 @@
 import { AbstractModel } from 'src/common/abstract.model';
 
 export class Chirp extends AbstractModel {
+	readonly userId: string;
+
 	readonly content: string;
+
+	readonly subChirpCount: number;
 
 	readonly subChirpIds: string[];
 
@@ -14,4 +18,6 @@ export class Chirp extends AbstractModel {
 	readonly reChirpUserIds: string[];
 
 	readonly postDate: Date;
+
+	readonly isSubChirp: boolean;
 }

@@ -13,6 +13,10 @@ export class User extends AbstractModel {
 
 	readonly isVerified: boolean;
 
+	readonly isBanned: boolean;
+
+	readonly isMuted: boolean;
+
 	readonly bio?: string;
 
 	readonly website?: string;

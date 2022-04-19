@@ -24,6 +24,8 @@ export class UsersService {
 			followingCount: userDoc.followingCount,
 			followingIds: userDoc.followingIds,
 			isVerified: userDoc.isVerified,
+			isBanned: userDoc.isBanned,
+			isMuted: userDoc.isMuted,
 			joinDate: userDoc.joinDate,
 			displayName: userDoc.displayName,
 			bio: userDoc.bio,

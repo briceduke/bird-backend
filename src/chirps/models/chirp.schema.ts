@@ -4,7 +4,13 @@ import { AbstractDocument } from 'src/database/abstract.schema';
 @Schema({ versionKey: false })
 export class ChirpDocument extends AbstractDocument {
 	@Prop()
+	readonly userId: string;
+
+	@Prop()
 	readonly content: string;
+
+	@Prop()
+	readonly subChirpCount: number;
 
 	@Prop()
 	readonly subChirpIds: string[];
@@ -23,6 +29,12 @@ export class ChirpDocument extends AbstractDocument {
 
 	@Prop()
 	readonly postDate: Date;
+
+	@Prop()
+	readonly isDeleted: boolean;
+
+	@Prop()
+	readonly isSubChirp: boolean;
 }
 
 export const ChirpSchema = SchemaFactory.createForClass(ChirpDocument);
