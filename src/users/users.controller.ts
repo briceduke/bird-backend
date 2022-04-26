@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
@@ -17,7 +17,7 @@ export class UsersController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get()
-	async getUser(@Body() getUserDto: GetUserDto): Promise<User> {
+	async getUser(@Query() getUserDto: GetUserDto): Promise<User> {
 		return this.usersService.get(getUserDto);
 	}
 
@@ -30,14 +30,14 @@ export class UsersController {
 	@UseGuards(JwtAuthGuard)
 	@Get("username")
 	async getUserByUsername(
-		@Body() getUserByUsername: GetUserByUsernameDto
+		@Query() getUserByUsername: GetUserByUsernameDto
 	): Promise<User> {
 		return this.usersService.get(getUserByUsername);
 	}
 
 	@UseGuards(JwtAuthGuard)
 	@Get("many")
-	async getUsers(@Body() getUsersDto: GetUsersDto): Promise<User[]> {
+	async getUsers(@Query() getUsersDto: GetUsersDto): Promise<User[]> {
 		return this.usersService.getMany(getUsersDto);
 	}
 
