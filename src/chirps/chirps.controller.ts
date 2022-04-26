@@ -1,4 +1,4 @@
-import { Body, Controller, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Patch, Post, UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from 'src/users/models/user.model';
@@ -14,6 +14,7 @@ import { Chirp } from './models/chirp.model';
 export class ChirpsController {
 	constructor(private readonly chirpsService: ChirpsService) {}
 
+	@Post()
 	async createChirp(
 		@Body() createChirpDto: CreateChirpInput,
 		@CurrentUser() user: User
@@ -21,6 +22,7 @@ export class ChirpsController {
 		return this.chirpsService.create(createChirpDto, user._id, user.isMuted);
 	}
 
+	@Delete()
 	async deleteChirp(
 		@Body() deleteChirpDto: DeleteChirpInput,
 		@CurrentUser() user: User
@@ -28,6 +30,7 @@ export class ChirpsController {
 		return this.chirpsService.delete(deleteChirpDto, user._id);
 	}
 
+	@Patch()
 	async likeChirp(
 		@Body() likeChirpDto: GetChirpDto,
 		@CurrentUser() user: User
