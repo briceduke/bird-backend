@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { Types } from 'mongoose';
 
 import { GetUserByUsernameDto } from './dto/args/get-user-username.dto';
 import { GetUserDto } from './dto/args/get-user.dto';
@@ -20,9 +21,9 @@ export class UsersService {
 			_id: userDoc._id.toHexString(),
 			username: userDoc.username,
 			followersCount: userDoc.followersCount,
-			followersId: userDoc.followersId,
+			followersId: userDoc.followersId.map((id) => id.toHexString()),
 			followingCount: userDoc.followingCount,
-			followingIds: userDoc.followingIds,
+			followingIds: userDoc.followingIds.map((id) => id.toHexString()),
 			isVerified: userDoc.isVerified,
 			isBanned: userDoc.isBanned,
 			isMuted: userDoc.isMuted,
@@ -66,6 +67,9 @@ export class UsersService {
 			joinDate: new Date(Date.now()),
 			password: await bcrypt.hash(data.password, 13),
 			chirpsCount: 0,
+			avatarUri: data.avatarUri
+				? data.avatarUri
+				: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
 		});
 
 		return this.toModel(userDoc);
@@ -87,7 +91,7 @@ export class UsersService {
 
 		if (
 			!targetCandidate ||
-			targetCandidate.followersId.includes(userId) ||
+			targetCandidate.followersId.includes(new Types.ObjectId(userId)) ||
 			targetCandidate._id.toHexString() === userId
 		)
 			throw new BadRequestException();
@@ -96,7 +100,7 @@ export class UsersService {
 			{ _id: data._id },
 			{
 				$push: {
-					followersId: userId,
+					followersId: new Types.ObjectId(userId),
 				},
 				$inc: {
 					followersCount: 1,
@@ -124,7 +128,7 @@ export class UsersService {
 
 		if (
 			!targetCandidate ||
-			!targetCandidate.followersId.includes(userId) ||
+			!targetCandidate.followersId.includes(new Types.ObjectId(userId)) ||
 			targetCandidate._id.toHexString() === userId
 		)
 			throw new BadRequestException();
@@ -133,7 +137,7 @@ export class UsersService {
 			{ _id: data._id },
 			{
 				$pull: {
-					followersId: userId,
+					followersId: new Types.ObjectId(userId),
 				},
 				$inc: {
 					followersCount: -1,

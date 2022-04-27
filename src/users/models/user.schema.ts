@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { AbstractDocument } from 'src/database/abstract.schema';
 
 @Schema({ versionKey: false })
@@ -9,14 +10,14 @@ export class UserDocument extends AbstractDocument {
 	@Prop()
 	password: string;
 
-	@Prop()
-	followersId: string[];
+	@Prop({ type: SchemaTypes.ObjectId })
+	followersId: Types.ObjectId[];
 
 	@Prop()
 	followersCount: number;
 
-	@Prop()
-	followingIds: string[];
+	@Prop({ type: SchemaTypes.ObjectId })
+	followingIds: Types.ObjectId[];
 
 	@Prop()
 	followingCount: number;
