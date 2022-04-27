@@ -83,6 +83,15 @@ export class UsersService {
 	}
 
 	async follow(data: FollowUserInput, userId: string): Promise<User> {
+		const targetCandidate = await this.usersRepo.findOne({ _id: data._id });
+
+		if (
+			!targetCandidate ||
+			targetCandidate.followersId.includes(userId) ||
+			targetCandidate._id.toHexString() === userId
+		)
+			throw new BadRequestException();
+
 		const targetDoc = await this.usersRepo.findOneAndUpdate(
 			{ _id: data._id },
 			{
@@ -94,8 +103,6 @@ export class UsersService {
 				},
 			}
 		);
-
-		if (!targetDoc) throw new NotFoundException();
 
 		const userDoc = await this.usersRepo.findOneAndUpdate(
 			{ _id: userId },
@@ -113,6 +120,15 @@ export class UsersService {
 	}
 
 	async unfollow(data: FollowUserInput, userId: string): Promise<User> {
+		const targetCandidate = await this.usersRepo.findOne({ _id: data._id });
+
+		if (
+			!targetCandidate ||
+			!targetCandidate.followersId.includes(userId) ||
+			targetCandidate._id.toHexString() === userId
+		)
+			throw new BadRequestException();
+
 		const targetDoc = await this.usersRepo.findOneAndUpdate(
 			{ _id: data._id },
 			{
@@ -124,8 +140,6 @@ export class UsersService {
 				},
 			}
 		);
-
-		if (!targetDoc) throw new NotFoundException();
 
 		const userDoc = await this.usersRepo.findOneAndUpdate(
 			{ _id: userId },

@@ -70,6 +70,6 @@ export class UsersController {
 		@Body() unfollowUserDto: FollowUserInput,
 		@CurrentUser() user: User
 	): Promise<User> {
-		return this.usersService.follow(unfollowUserDto, user._id);
+		return this.usersService.unfollow(unfollowUserDto, user._id);
 	}
 }
