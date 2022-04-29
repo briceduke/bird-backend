@@ -37,7 +37,7 @@ export class ChirpsService {
 	async create(data: CreateChirpInput, userId: string, isMuted: boolean) {
 		if (isMuted) throw new UnauthorizedException("you are muted!");
 
-		if (data.subjectChirpId.length > 0) {
+		if (data.subjectChirpId && data.subjectChirpId.length > 0) {
 			const subjectChirpDoc = await this.chirpsRepo.findOne({
 				_id: data.subjectChirpId,
 			});
@@ -61,10 +61,10 @@ export class ChirpsService {
 			subChirpCount: 0,
 			subChirpIds: [],
 			isDeleted: false,
-			isSubChirp: data.subjectChirpId.length > 0 ? true : false,
+			isSubChirp: data.subjectChirpId && data.subjectChirpId.length > 0 ? true : false,
 		});
 
-		if (data.subjectChirpId.length > 0) {
+		if (data.subjectChirpId && data.subjectChirpId.length > 0) {
 			await this.chirpsRepo.findOneAndUpdate(
 				{ _id: data.subjectChirpId },
 				{

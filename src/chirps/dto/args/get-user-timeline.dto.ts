@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty, IsNumber, Max, Min } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsNumberString, Max, Min } from 'class-validator';
 
 export class GetUserTimelineDto {
 	@IsNotEmpty()
@@ -6,13 +6,10 @@ export class GetUserTimelineDto {
 	readonly userId: string;
 
     @IsNotEmpty()
-    @IsNumber()
-    @Min(0)
+    @IsNumberString()
     readonly skip: number;
 
     @IsNotEmpty()
-    @IsNumber()
-    @Min(0)
-    @Max(20)
+    @IsNumberString()
     readonly limit: number;
 }
