@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { GetUserDto } from 'src/users/dto/args/get-user.dto';
 import { User } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
 
 import { GetChirpDto } from './dto/args/get-chirp.dto';
+import { GetHomeTimelineDto } from './dto/args/get-home-timeline.dto';
+import { GetUserTimelineDto } from './dto/args/get-user-timeline.dto';
 import { CreateChirpInput } from './dto/input/create-chirp.input';
 import { DeleteChirpInput } from './dto/input/delete-chirp.input';
 import { Chirp } from './models/chirp.model';
@@ -141,5 +144,44 @@ export class ChirpsService {
 		}
 
 		return this.toModel(chirpDoc);
+	}
+
+	async getChirp(getChirpDto: GetChirpDto): Promise<Chirp> {
+		const chirpDoc = await this.chirpsRepo.findOne(getChirpDto);
+
+		if (!chirpDoc) throw new NotFoundException();
+
+		return this.toModel(chirpDoc);
+	}
+
+	async getChirpsById(getChirpsDto: GetChirpDto): Promise<Chirp[]> {
+		const chirpDocs = await this.chirpsRepo.find(getChirpsDto);
+
+		if (!chirpDocs) throw new NotFoundException();
+
+		return chirpDocs.map(doc => this.toModel(doc));
+	}
+
+	async getUserTimeline(userDto: GetUserTimelineDto): Promise<Chirp[]> {
+		const chirpDocs = await this.chirpsRepo.findAndPaginate({ userId: userDto.userId }, userDto.skip, userDto.limit);
+
+		if (!chirpDocs) throw new BadRequestException();
+
+		return chirpDocs.map(doc => this.toModel(doc));
+	}
+
+	async getHomeTimeline(getHomeTimelineDto: GetHomeTimelineDto, user: User): Promise<Chirp[]> {
+		const limitPerUser = Math.floor(getHomeTimelineDto.limit / user.followingCount);
+		const skipPerUser = Math.floor(getHomeTimelineDto.skip / user.followingCount);
+
+		let chirps: Chirp[] = [];
+
+		for (const userId of user.followingIds) {
+			const userChirps = await this.getUserTimeline({ userId, limit: limitPerUser, skip: skipPerUser });
+
+			chirps.concat(userChirps);
+		}
+
+		return chirps.sort((a, b) => b.postDate.getTime() - a.postDate.getTime());
 	}
 }
