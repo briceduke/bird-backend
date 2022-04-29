@@ -3,6 +3,10 @@ import { AbstractModel } from 'src/common/abstract.model';
 export class Chirp extends AbstractModel {
 	readonly userId: string;
 
+	readonly userUsername: string;
+
+	readonly userAvatarUri: string;
+
 	readonly content: string;
 
 	readonly subChirpCount: number;

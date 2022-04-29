@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/users/models/user.model';
+import { UsersService } from 'src/users/users.service';
 
 import { GetChirpDto } from './dto/args/get-chirp.dto';
 import { CreateChirpInput } from './dto/input/create-chirp.input';
@@ -10,12 +11,14 @@ import { ChirpsRepository } from './repositories/chirps.repository';
 
 @Injectable()
 export class ChirpsService {
-	constructor(private readonly chirpsRepo: ChirpsRepository) {}
+	constructor(private readonly chirpsRepo: ChirpsRepository, private readonly usersService: UsersService) {}
 
 	private toModel(chirpDoc: ChirpDocument): Chirp {
 		return {
 			_id: chirpDoc._id.toHexString(),
 			userId: chirpDoc.userId,
+			userUsername: chirpDoc.userUsername,
+			userAvatarUri: chirpDoc.userAvatarUri,
 			content: chirpDoc.content,
 			likeCount: chirpDoc.likeCount,
 			likedUserIds: chirpDoc.likedUserIds,
@@ -40,9 +43,13 @@ export class ChirpsService {
 				throw new NotFoundException("subject chirp not found!");
 		}
 
+		const user = await this.usersService.get({ _id: userId });
+
 		const chirpDoc = await this.chirpsRepo.create({
 			...data,
 			userId,
+			userUsername: user.username,
+			userAvatarUri: user.avatarUri,
 			likeCount: 0,
 			likedUserIds: [],
 			postDate: new Date(Date.now()),

@@ -7,6 +7,12 @@ export class ChirpDocument extends AbstractDocument {
 	readonly userId: string;
 
 	@Prop()
+	readonly userUsername: string;
+
+	@Prop()
+	readonly userAvatarUri: string;
+
+	@Prop()
 	readonly content: string;
 
 	@Prop()
