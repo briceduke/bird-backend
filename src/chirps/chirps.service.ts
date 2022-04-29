@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { GetUserDto } from 'src/users/dto/args/get-user.dto';
 import { User } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
 
 import { GetChirpDto } from './dto/args/get-chirp.dto';
+import { GetChirpsDto } from './dto/args/get-chirps.dto';
 import { GetHomeTimelineDto } from './dto/args/get-home-timeline.dto';
 import { GetUserTimelineDto } from './dto/args/get-user-timeline.dto';
 import { CreateChirpInput } from './dto/input/create-chirp.input';
@@ -154,7 +154,15 @@ export class ChirpsService {
 		return this.toModel(chirpDoc);
 	}
 
-	async getChirpsById(getChirpsDto: GetChirpDto): Promise<Chirp[]> {
+	async getSubChirps(getChirpDto: GetChirpDto): Promise<Chirp[]> {
+		const chirpDoc = await this.getChirp(getChirpDto);
+
+		const subChirpDocs = await this.getChirpsById({ _id: chirpDoc.subChirpIds });
+
+		return subChirpDocs;
+	}
+
+	async getChirpsById(getChirpsDto: GetChirpsDto): Promise<Chirp[]> {
 		const chirpDocs = await this.chirpsRepo.find(getChirpsDto);
 
 		if (!chirpDocs) throw new NotFoundException();
