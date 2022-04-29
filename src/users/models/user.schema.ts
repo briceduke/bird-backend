@@ -26,6 +26,9 @@ export class UserDocument extends AbstractDocument {
 	isVerified: boolean;
 
 	@Prop()
+	isAdmin: boolean;
+
+	@Prop()
 	isBanned: boolean;
 
 	@Prop()

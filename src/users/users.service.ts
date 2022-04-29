@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Types } from 'mongoose';
+import { InvitesService } from 'src/invites/invites.service';
 
 import { GetUserByUsernameDto } from './dto/args/get-user-username.dto';
 import { GetUserDto } from './dto/args/get-user.dto';
@@ -14,7 +15,7 @@ import { UsersRepository } from './repositories/users.repository';
 
 @Injectable()
 export class UsersService {
-	constructor(private readonly usersRepo: UsersRepository) {}
+	constructor(private readonly usersRepo: UsersRepository, private readonly invitesService: InvitesService) {}
 
 	private toModel(userDoc: UserDocument): User {
 		return {
@@ -25,6 +26,7 @@ export class UsersService {
 			followingCount: userDoc.followingCount,
 			followingIds: userDoc.followingIds.map((id) => id.toHexString()),
 			isVerified: userDoc.isVerified,
+			isAdmin: userDoc.isAdmin,
 			isBanned: userDoc.isBanned,
 			isMuted: userDoc.isMuted,
 			joinDate: userDoc.joinDate,
@@ -51,6 +53,8 @@ export class UsersService {
 	}
 
 	async create(data: CreateUserInput): Promise<User> {
+		await this.invitesService.useInvite(data.inviteCode);
+		
 		const user = await this.usersRepo.findOne({ username: data.username });
 
 		if (user) throw new BadRequestException("username exists!");
@@ -64,6 +68,7 @@ export class UsersService {
 			isMuted: false,
 			isBanned: false,
 			isVerified: false,
+			isAdmin: false,
 			joinDate: new Date(Date.now()),
 			password: await bcrypt.hash(data.password, 13),
 			chirpsCount: 0,

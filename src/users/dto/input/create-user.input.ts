@@ -18,6 +18,12 @@ export class CreateUserInput {
 	@MaxLength(50)
 	readonly displayName: string;
 
+	@IsNotEmpty()
+	@IsString()
+	@MinLength(8)
+	@MaxLength(8)
+	readonly inviteCode: string;
+
 	@IsOptional()
 	@IsString()
 	@MinLength(3)
