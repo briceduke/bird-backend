@@ -15,16 +15,19 @@ import { UsersRepository } from './repositories/users.repository';
 
 @Injectable()
 export class UsersService {
-	constructor(private readonly usersRepo: UsersRepository, private readonly invitesService: InvitesService) {}
+	constructor(
+		private readonly usersRepo: UsersRepository,
+		private readonly invitesService: InvitesService
+	) {}
 
 	private toModel(userDoc: UserDocument): User {
 		return {
 			_id: userDoc._id.toHexString(),
 			username: userDoc.username,
 			followersCount: userDoc.followersCount,
-			followersId: userDoc.followersId && userDoc.followersId.map((id) => id.toHexString()),
+			followersId: userDoc.followersId.map((id) => id.toHexString()),
 			followingCount: userDoc.followingCount,
-			followingIds: userDoc.followingIds && userDoc.followingIds.map((id) => id.toHexString()),
+			followingIds: userDoc.followingIds.map((id) => id.toHexString()),
 			isVerified: userDoc.isVerified,
 			isAdmin: userDoc.isAdmin,
 			isBanned: userDoc.isBanned,
@@ -54,7 +57,7 @@ export class UsersService {
 
 	async create(data: CreateUserInput): Promise<User> {
 		await this.invitesService.useInvite(data.inviteCode);
-		
+
 		const user = await this.usersRepo.findOne({ username: data.username });
 
 		if (user) throw new BadRequestException("username exists!");
@@ -62,9 +65,7 @@ export class UsersService {
 		const userDoc = await this.usersRepo.create({
 			...data,
 			followersCount: 0,
-			followersId: null,
 			followingCount: 0,
-			followingIds: null,
 			isMuted: false,
 			isBanned: false,
 			isVerified: false,

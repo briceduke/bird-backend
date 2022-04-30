@@ -14,7 +14,10 @@ import { ChirpsRepository } from './repositories/chirps.repository';
 
 @Injectable()
 export class ChirpsService {
-	constructor(private readonly chirpsRepo: ChirpsRepository, private readonly usersService: UsersService) {}
+	constructor(
+		private readonly chirpsRepo: ChirpsRepository,
+		private readonly usersService: UsersService
+	) {}
 
 	private toModel(chirpDoc: ChirpDocument): Chirp {
 		return {
@@ -61,7 +64,8 @@ export class ChirpsService {
 			subChirpCount: 0,
 			subChirpIds: [],
 			isDeleted: false,
-			isSubChirp: data.subjectChirpId && data.subjectChirpId.length > 0 ? true : false,
+			isSubChirp:
+				data.subjectChirpId && data.subjectChirpId.length > 0 ? true : false,
 		});
 
 		if (data.subjectChirpId && data.subjectChirpId.length > 0) {
@@ -122,6 +126,15 @@ export class ChirpsService {
 
 		if (chirpDoc.likedUserIds.includes(user._id)) {
 			await this.chirpsRepo.findOneAndUpdate(data, {
+				$pull: {
+					likedUserIds: user._id,
+				},
+				$inc: {
+					likeCount: -1,
+				},
+			});
+		} else {
+			await this.chirpsRepo.findOneAndUpdate(data, {
 				$push: {
 					likedUserIds: user._id,
 				},
@@ -129,18 +142,6 @@ export class ChirpsService {
 					likeCount: 1,
 				},
 			});
-		} else {
-			await this.chirpsRepo.findOneAndUpdate(
-				{ _id: data._id, userId: user._id },
-				{
-					$pull: {
-						likedUserIds: user._id,
-					},
-					$inc: {
-						likeCount: -1,
-					},
-				}
-			);
 		}
 
 		return this.toModel(chirpDoc);
@@ -157,7 +158,9 @@ export class ChirpsService {
 	async getSubChirps(getChirpDto: GetChirpDto): Promise<Chirp[]> {
 		const chirpDoc = await this.getChirp(getChirpDto);
 
-		const subChirpDocs = await this.getChirpsById({ _id: chirpDoc.subChirpIds });
+		const subChirpDocs = await this.getChirpsById({
+			_id: chirpDoc.subChirpIds,
+		});
 
 		return subChirpDocs;
 	}
@@ -167,27 +170,42 @@ export class ChirpsService {
 
 		if (!chirpDocs) throw new NotFoundException();
 
-		return chirpDocs.map(doc => this.toModel(doc));
+		return chirpDocs.map((doc) => this.toModel(doc));
 	}
 
 	async getUserTimeline(userDto: GetUserTimelineDto): Promise<Chirp[]> {
-		const chirpDocs = await this.chirpsRepo.findAndPaginate({ userId: userDto.userId }, userDto.skip, userDto.limit);
+		const chirpDocs = await this.chirpsRepo.findAndPaginate(
+			{ userId: userDto.userId },
+			userDto.skip,
+			userDto.limit
+		);
 
 		if (!chirpDocs) throw new BadRequestException();
 
-		return chirpDocs.map(doc => this.toModel(doc));
+		return chirpDocs.map((doc) => this.toModel(doc));
 	}
 
-	async getHomeTimeline(getHomeTimelineDto: GetHomeTimelineDto, user: User): Promise<Chirp[]> {
-		const limitPerUser = Math.floor(getHomeTimelineDto.limit / user.followingCount);
-		const skipPerUser = Math.floor(getHomeTimelineDto.skip / user.followingCount);
+	async getHomeTimeline(
+		getHomeTimelineDto: GetHomeTimelineDto,
+		user: User
+	): Promise<Chirp[]> {
+		const limitPerUser = Math.floor(
+			getHomeTimelineDto.limit / user.followingCount
+		);
+		const skipPerUser = Math.floor(
+			getHomeTimelineDto.skip / user.followingCount
+		);
 
 		let chirps: Chirp[] = [];
 
 		for (const userId of user.followingIds) {
-			const userChirps = await this.getUserTimeline({ userId, limit: limitPerUser, skip: skipPerUser });
+			const userChirps = await this.getUserTimeline({
+				userId,
+				limit: limitPerUser,
+				skip: skipPerUser,
+			});
 
-			chirps.concat(userChirps);
+			chirps = chirps.concat(userChirps);
 		}
 
 		return chirps.sort((a, b) => b.postDate.getTime() - a.postDate.getTime());

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from 'src/users/models/user.model';
@@ -22,23 +22,28 @@ export class ChirpsController {
 		return this.chirpsService.getChirp(getChirpDto);
 	}
 
-	@Get('/many')
+	@Get("/many")
 	async getChirps(@Query() getChirpsDto: GetChirpsDto): Promise<Chirp[]> {
 		return this.chirpsService.getChirpsById(getChirpsDto);
 	}
 
-	@Get('/replies')
+	@Get("/replies")
 	async getSubChirps(@Query() getChirpDto: GetChirpDto): Promise<Chirp[]> {
 		return this.chirpsService.getSubChirps(getChirpDto);
 	}
 
-	@Get('/timeline/user')
-	async getUserTimeline(@Query() getUserTimelineDto: GetUserTimelineDto): Promise<Chirp[]> {
+	@Get("/timeline/user")
+	async getUserTimeline(
+		@Query() getUserTimelineDto: GetUserTimelineDto
+	): Promise<Chirp[]> {
 		return this.chirpsService.getUserTimeline(getUserTimelineDto);
 	}
 
-	@Get('/timeline/home')
-	async getHomeTimeline(@Query() getHomeTimelineDto: GetHomeTimelineDto, @CurrentUser() user: User): Promise<Chirp[]> {
+	@Get("/timeline/home")
+	async getHomeTimeline(
+		@Query() getHomeTimelineDto: GetHomeTimelineDto,
+		@CurrentUser() user: User
+	): Promise<Chirp[]> {
 		return this.chirpsService.getHomeTimeline(getHomeTimelineDto, user);
 	}
 
@@ -58,7 +63,7 @@ export class ChirpsController {
 		return this.chirpsService.delete(deleteChirpDto, user._id);
 	}
 
-	@Patch()
+	@Post("/like")
 	async likeChirp(
 		@Body() likeChirpDto: GetChirpDto,
 		@CurrentUser() user: User

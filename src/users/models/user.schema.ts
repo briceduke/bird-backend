@@ -10,14 +10,14 @@ export class UserDocument extends AbstractDocument {
 	@Prop()
 	password: string;
 
-	@Prop({ type: SchemaTypes.ObjectId })
-	followersId: Types.ObjectId[];
+	@Prop({ type: [SchemaTypes.ObjectId], default: [] })
+	followersId?: Types.ObjectId[];
 
 	@Prop()
 	followersCount: number;
 
-	@Prop({ type: SchemaTypes.ObjectId })
-	followingIds: Types.ObjectId[];
+	@Prop({ type: [SchemaTypes.ObjectId], default: [] })
+	followingIds?: Types.ObjectId[];
 
 	@Prop()
 	followingCount: number;
